@@ -1,0 +1,211 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Dec 20 10:03:22 2024
+@author: rivera
+"""
+from sys import argv as args
+import re
+import os
+from csv_diff import load_csv, compare
+
+from typing import List
+
+DEBUG: bool = False
+TEST_FILES_FOLDER: str = 'tests'
+TEST_FILES: list = [
+                    os.path.join(TEST_FILES_FOLDER, 'test00.csv'),
+                    os.path.join(TEST_FILES_FOLDER, 'test01.csv'),
+                    os.path.join(TEST_FILES_FOLDER, 'test02.csv'),
+                    os.path.join(TEST_FILES_FOLDER, 'test03.csv'),
+                    os.path.join(TEST_FILES_FOLDER, 'test04.csv'),
+                    os.path.join(TEST_FILES_FOLDER, 'test05.csv'),
+                    os.path.join(TEST_FILES_FOLDER, 'test06.csv')]
+REQUIRED_FILES: list = ['spf_analyzer']
+TESTER_PROGRAM_NAME: str = 'tester'
+PROGRAM_ARGS: str = '<task(e.g.,0,1,2,3,4,5,6)>'
+USAGE_MSG: str = f'Usage: ./{TESTER_PROGRAM_NAME} {PROGRAM_ARGS} or ./{TESTER_PROGRAM_NAME}'
+
+
+def required_files_exist() -> bool:
+    """Determines whether there are missing files.
+            Returns
+            -------
+                bool
+    """
+    exist: bool = True
+    for file in REQUIRED_FILES + TEST_FILES:
+        print(os.getcwd())
+        if not os.path.isfile(file):
+            exist = False
+            print(file)
+            break
+    return exist
+
+
+def print_message(is_error: bool, message: str) -> None:
+    """Prints a message to stdout.
+            Parameters
+            ----------
+                is_error : bool, required
+                    Indicates whether the message is an error.
+                message : str, required
+                    The message to be printed out.
+    """
+    message_type: str = 'ERROR' if is_error else 'INFO'
+    print(f'[{TESTER_PROGRAM_NAME}] ({message_type}): {message}')
+
+
+def generate_test_args(question: str) -> list:
+    """Generates the arguments for the tests.
+            Parameters
+            ----------
+                question : str, required
+                    The question for the args to be generated. None if args for all test cases should be generated.
+            Returns
+            -------
+                list
+                    A list with all the args generated.
+    """
+    test_args = []
+    template: str = '--TASK="<THE_QUESTION>"'
+    if question is None:
+        for i in range(6):
+            test_args.append(re.sub("<THE_QUESTION>", f'{i + 1}', template))
+    else:
+        test_args.append(re.sub("<THE_QUESTION>", f'{question}', template))
+    return test_args
+
+
+def generate_execution_commands(generated_args: list) -> list:
+    """Generates the execution commands for the tests.
+            Parameters
+            ----------
+                generated_args : list, required
+                    The args to be passed to the commands
+            Returns
+            -------
+                list
+                    A list with all the commands generated.
+    """
+    commands: list = []
+    template: str = './spf_analyzer '
+    for arg in generated_args:
+        commands.append(template + arg)
+    return commands
+
+
+def validate_tests(execution_commands: list) -> None:
+    """Generates the execution commands for the tests.
+            Parameters
+            ----------
+                execution_commands : list, required
+                    The generated commands.
+    """
+    separator: str = '----------------------------------------'
+    print_message(is_error=False, message=f'Tests to run: {len(execution_commands)}')
+    tests_passed: int = 0
+    pattern_question = re.compile(r'--TASK=\"(.+)\"')
+    result = 'N\A'
+    for i in range(len(execution_commands)):
+        command: str = execution_commands[i]
+        question: str = pattern_question.search(command).group(1)
+        print_message(is_error=False, message=f'|Test 0{question}|' + separator)
+        required: list = [f'output.csv']
+        # delete existing files
+        for required_file in required:
+            if os.path.isfile(required_file) and not DEBUG:
+                os.remove(required_file)
+        test_pass: bool = True
+        print_message(is_error=False, message=f'Attempting: {command}')
+        # execute command
+        os.system(command=command)
+        order_differences: bool = False
+        # validate generated files (csv)
+        if not os.path.isfile(required[0]):
+            print_message(is_error=False, message=f'spf_analyzer should generate {required[0]} for this test.')
+            test_pass = False
+        else:
+            # read csvs
+            error_produced: bool = False
+            try:
+                produced_data = load_csv(open(required[0]))
+            except:
+                error_produced = True
+                test_pass = False
+            if error_produced:
+                print_message(is_error=True,
+                              message=f'Error reading data generated by {REQUIRED_FILES[0]}. Empty file or wrong format (e.g., invalid headers).')
+            else:
+                expected_data = load_csv(open(os.path.join(TEST_FILES_FOLDER, f'test0{question}.csv')))
+                # obtain the differences
+                result = compare(produced_data, expected_data)
+                # compare
+                if len(result['added']) > 0 or len(result['removed']) > 0 or len(result['changed']) > 0 or len(
+                        result['columns_added']) > 0 or len(result['columns_removed']) > 0:
+                    test_pass = False
+                else:
+                    # validate order
+                    produced_elements: List[tuple] = []
+                    expected_elements: List[tuple] = []
+                    try:
+                        # produced
+                        for key in produced_data.keys():
+                            value: dict = produced_data[key]
+                            produced_elements.append((value['Record_ID']))
+                        # expected
+                        for key in expected_data.keys():
+                            value: dict = expected_data[key]
+                            expected_elements.append((value['Record_ID']))
+                        # verify order
+                        for j in range(len(produced_elements)):
+                            produced: tuple = produced_elements[j]
+                            expected: tuple = expected_elements[j]
+                            if not produced == expected:
+                                test_pass = False
+                                order_differences = True
+                                break
+                    except:
+                        test_pass = False
+        print_message(is_error=False, message=f'TEST PASSED: {test_pass}')
+        if not test_pass and os.path.isfile(required[0]):
+            if not order_differences:
+                print_message(is_error=False, message=f'DIFFERENCES: {result}')
+            else:
+                print_message(is_error=False, message=f'DIFFERENCES: wrong order in rows.')
+        if test_pass:
+            tests_passed += 1
+    print_message(is_error=False, message=separator + '--------')
+    print_message(is_error=False, message=f'TESTS PASSED: {tests_passed}/{len(execution_commands)}')
+
+
+def main():
+    """Main entry point of the program."""
+    if len(args) - 1 > len(PROGRAM_ARGS.split(" ")):
+        print_message(is_error=True, message=USAGE_MSG)
+    else:
+        question: str = None
+        if len(args) != 1:
+            question = args[1]
+        # validate required files
+        if not required_files_exist():
+            print_message(is_error=True, message=f'Required files: {REQUIRED_FILES + TEST_FILES}')
+        else:
+            # validate args
+            valid_args: bool = True
+            try:
+                if question is not None:
+                    question_int: int = int(question)
+                    if question_int not in [0, 1, 2, 3, 4, 5, 6]:
+                        valid_args = False
+            except ValueError:
+                valid_args = False
+            if valid_args:
+                commands: list = generate_execution_commands(generated_args=generate_test_args(question=question))
+                validate_tests(execution_commands=commands)
+            else:
+                print_message(is_error=True, message=USAGE_MSG)
+
+
+if __name__ == '__main__':
+    main()
