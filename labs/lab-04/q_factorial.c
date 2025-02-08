@@ -1,12 +1,5 @@
 /** @file q_array_rotate.c
  *  @brief Submission program for Lab 04.
- *
- *  This program calculates the factorial of a number provided as a
- *  command line argument.
- *
- *  Usage example:
- *  ./q_array_rotate 5
- *
  *  @author Mike Z.
  *  @author Felipe R.
  *  @author Hausi M.
@@ -14,6 +7,7 @@
  *  @author Saasha J.
  *  @author Victoria L.
  *  @author Tanuj D.
+ *
  */
 
 #include <stdio.h>
