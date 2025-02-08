@@ -1,4 +1,4 @@
-/** @file q_array_rotate.c
+/** @file q_factorial.c
  *  @brief Submission program for Lab 04.
  *  @author Mike Z.
  *  @author Felipe R.
