@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Jan 28 10:04:26 2025
-Updated on Feb 19 20:27:55 2025
+Updated on Feb 19 18:32:55 2025
 Based on: https://www.kaggle.com/datasets/lainguyn123/student-performance-factors
 @author: rivera
 @author: tanujd
@@ -84,7 +84,7 @@ def assign_grade(score: float) -> str:
     str
         Grade assigned
     """
-    if 90 <= score <= 100: return 'A+'
+    if 90 <= score <= 101: return 'A+'
     elif 85 <= score < 90: return 'A'
     elif 80 <= score < 85: return 'A-'
     elif 77 <= score < 80: return 'B+'
@@ -105,11 +105,17 @@ def task4(df: pd.DataFrame, output_file: str = 'output.csv') -> None:
     output_file : str, optional
         Output file name, by default 'output.csv'
     """
+    # Make a copy to avoid modifying original dataframe
+    df_copy = df.copy()
+    
+    # For scores above 100, set them to 100 before grade calculation
+    df_copy['Exam_Score'] = df_copy['Exam_Score'].apply(lambda x: min(x, 100))
+    
     # Assign grades
-    df['Grade'] = df['Exam_Score'].apply(assign_grade)
+    df_copy['Grade'] = df_copy['Exam_Score'].apply(assign_grade)
     
     # Calculate average attendance per grade with specified precision
-    result = (df.groupby('Grade')['Attendance']
+    result = (df_copy.groupby('Grade')['Attendance']
               .agg(lambda x: round(x.mean(), 1))  # Force exactly one decimal place
               .reset_index())
     
@@ -140,22 +146,14 @@ def assign_grade_task5(score: float) -> str:
     str
         Grade assigned
     """
-    if 80 <= score <= 101: return 'A'
+    if score >= 80: return 'A'
     elif 70 <= score < 80: return 'B'
     elif 60 <= score < 70: return 'C'
     elif 50 <= score < 60: return 'D'
     else: return 'F'
 
 def task5(df: pd.DataFrame, output_file: str = 'output.csv') -> None:
-    """Generate CSV with grade classifications and tutoring session analysis.
-    
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Input dataframe
-    output_file : str, optional
-        Output file name, by default 'output.csv'
-    """
+    """Generate CSV with grade classifications and tutoring session analysis."""
     # Assign grades
     df['Grade'] = df['Exam_Score'].apply(assign_grade_task5)
     
