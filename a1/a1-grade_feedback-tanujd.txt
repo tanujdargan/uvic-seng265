@@ -1,0 +1,69 @@
+SENG 265 -- SPRING 2025
+ASSIGNMENT-1 EVALUATION
+=====================================
+
+Student Name:       Tanuj Dargan
+Student V-Number:   V01040822
+Student NetlinkID:  tanujd
+-----
+(1) spf_analyzer.c submitted to the correct folder and named appropriately; compiles without errors or warnings.
+Compilation status: Compiled successfully
+
+-----
+(2) Tests passed (and further comments)
+
+[tester] (INFO): Tests to run: 6
+[tester] (INFO): |Test 01|----------------------------------------
+[tester] (INFO): Attempting: ./spf_analyzer --TASK="1"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): |Test 02|----------------------------------------
+[tester] (INFO): Attempting: ./spf_analyzer --TASK="2"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): |Test 03|----------------------------------------
+[tester] (INFO): Attempting: ./spf_analyzer --TASK="3"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): |Test 04|----------------------------------------
+[tester] (INFO): Attempting: ./spf_analyzer --TASK="4"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): |Test 05|----------------------------------------
+[tester] (INFO): Attempting: ./spf_analyzer --TASK="5"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): |Test 06|----------------------------------------
+[tester] (INFO): Attempting: ./spf_analyzer --TASK="6"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): ------------------------------------------------
+[tester] (INFO): TESTS PASSED: 6/6
+
+
+
+-----
+(3) Code formatting and structure:
+
+
+Positive aspects:
+
+- Good formatting and structure of the code that facilitates reading
+  and understanding.
+
+- Good naming conventions for functions and variables.
+
+- Good attempt at documenting the code using comments to describe
+  important aspects of the solution.
+
+- Appropriate use of code segmentation (i.e. function creation and
+  use) that facilitates the usability and eventual maintainability of
+  your solution.
+
+Improvement opportunities:
+
+- It is always a good idea to minimize the length of your main()
+  function to facilitate the re-usability of your code. A large or
+  considerably big main() function might indicate that some portions of
+  code in the function might placed in independent functions, which
+  might potentially reused in the future. 
+
+-----
+GRADE: A+
+MARKS: 95
+
+
