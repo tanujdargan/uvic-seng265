@@ -1,0 +1,51 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Created on May 29 08:50:21 2024
+@author: rivera
+"""
+from sys import version_info
+from sys import argv as args
+from os import system
+
+
+TESTER_PROGRAM_NAME = 'tester'
+
+
+def print_message(is_error, message):
+    """Prints a message to stdout.
+            Parameters
+            ----------
+                is_error : bool, required
+                    Indicates whether the message is an error.
+                message : str, required
+                    The message to be printed out.
+    """
+    message_type = 'ERROR' if is_error else 'INFO'
+    print('[' + TESTER_PROGRAM_NAME + '] (' + message_type + '): ' + message)
+
+
+def is_python_version_valid():
+    """Determines whether the python version is valid.
+            Returns
+            -------
+                bool
+    """
+    major = version_info.major
+    minor = version_info.minor
+    return True if major == 3 and minor == 9 else False
+
+
+def main():
+    """Main entry point of the program."""
+    if not is_python_version_valid():
+        print_message(is_error=True, message='Make sure to use Python 3.9.')
+    else:
+        args_to_pass = ''
+        if len(args) - 1 >= 1:
+            args_to_pass = ' '.join(args[1:])
+        system('python validator ' + args_to_pass)
+
+
+if __name__ == '__main__':
+    main()
