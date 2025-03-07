@@ -1,0 +1,60 @@
+==2033== Memcheck, a memory error detector
+==2033== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==2033== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==2033== Command: ./dynamic This\ is\ the\ time\ for\ all\ good\ people\ to\ come\ to\ the\ aid\ of\ their\ country. 2
+==2033== 
+==2033== Invalid write of size 1
+==2033==    at 0x4C32E00: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2033==    by 0x1088B3: main (dynamic.c:23)
+==2033==  Address 0x522d054 is 0 bytes after a block of size 20 alloc'd
+==2033==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2033==    by 0x10886E: main (dynamic.c:17)
+==2033== 
+
+valgrind: m_mallocfree.c:307 (get_bszB_as_is): Assertion 'bszB_lo == bszB_hi' failed.
+valgrind: Heap block lo/hi size mismatch: lo = 96, hi = 8244232092177688175.
+This is probably caused by your program erroneously writing past the
+end of a heap block and corrupting heap metadata.  If you fix any
+invalid writes reported by Memcheck, this assertion failure will
+probably go away.  Please try that before reporting this as a bug.
+
+
+host stacktrace:
+==2033==    at 0x5804417A: ??? (in /usr/lib/valgrind/memcheck-amd64-linux)
+==2033==    by 0x58044294: ??? (in /usr/lib/valgrind/memcheck-amd64-linux)
+==2033==    by 0x58044419: ??? (in /usr/lib/valgrind/memcheck-amd64-linux)
+==2033==    by 0x58052F80: ??? (in /usr/lib/valgrind/memcheck-amd64-linux)
+==2033==    by 0x5803CE8A: ??? (in /usr/lib/valgrind/memcheck-amd64-linux)
+==2033==    by 0x5803B593: ??? (in /usr/lib/valgrind/memcheck-amd64-linux)
+==2033==    by 0x5803FC5D: ??? (in /usr/lib/valgrind/memcheck-amd64-linux)
+==2033==    by 0x5803A88B: ??? (in /usr/lib/valgrind/memcheck-amd64-linux)
+==2033==    by 0x1002D3B719: ???
+==2033==    by 0x1002CA9F2F: ???
+==2033==    by 0x1C0F: ???
+==2033==    by 0x100200834F: ???
+==2033==    by 0x1002CA9F17: ???
+==2033==    by 0x1002CA9F2F: ???
+==2033==    by 0x5946EB1F: ???
+==2033==    by 0x600: ???
+==2033==    by 0x1621F: ???
+
+sched status:
+  running_tid=1
+
+Thread 1: status = VgTs_Runnable (lwpid 2033)
+==2033==    at 0x4C32E0D: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2033==    by 0x1088B3: main (dynamic.c:23)
+
+
+Note: see also the FAQ in the source distribution.
+It contains workarounds to several common problems.
+In particular, if Valgrind aborted or crashed after
+identifying problems in your program, there's a good chance
+that fixing those problems will prevent Valgrind aborting or
+crashing, especially if it happened in m_mallocfree.c.
+
+If that doesn't help, please report this bug to: www.valgrind.org
+
+In the bug report, send all the above text, the valgrind
+version, and what OS and version you are using.  Thanks.
+

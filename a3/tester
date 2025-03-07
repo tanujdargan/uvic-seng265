@@ -2,7 +2,7 @@
 chmod u+x validator
 if (($# < 1))
 then
-    python checker
+    python3 checker
 else
-    python checker "$1"
+    python3 checker "$1"
 fi
