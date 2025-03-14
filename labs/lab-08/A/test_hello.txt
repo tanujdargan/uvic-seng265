@@ -1,0 +1,6 @@
+>>> print("Hello, world!")
+Hello, world!
+>>> 2 + 2
+4
+>>> [ i**2 for i in list(range(5))]
+[0, 1, 4, 9, 16]

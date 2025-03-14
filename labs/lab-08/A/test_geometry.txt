@@ -1,0 +1,13 @@
+>>> from geometry import Point
+>>> p1 = Point(3, 4)
+>>> p2 = Point(-12.2, 101)
+>>> p1
+Point(3, 4)
+>>> p2
+Point(-12.2, 101)
+>>> p3 = Point()
+>>> p3
+Point(0, 0)
+>>> li = [p2, Point(3)]
+>>> li
+[Point(-12.2, 101), Point(3, 0)]

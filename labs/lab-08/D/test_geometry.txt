@@ -1,0 +1,64 @@
+>>> from geometry import Point, Circle
+>>> from geometry import Point
+>>> p1 = Point()
+>>> p2 = Point(3, 4)
+>>> p3 = Point(-12.2, 101)
+>>> p1
+Point(0, 0)
+>>> p2
+Point(3, 4)
+>>> p3
+Point(-12.2, 101)
+>>> li = [p3, Point(3)]
+>>> li
+[Point(-12.2, 101), Point(3, 0)]
+>>> p4 = p1.delta_x(10)
+>>> p5 = p1.delta_y(-10)
+>>> p4
+Point(10, 0)
+>>> p5
+Point(0, -10)
+>>> p1
+Point(0, 0)
+>>> p4 = p1.translate(5, -5)
+>>> p4
+Point(5, -5)
+>>> li2 = [p.translate(-3.4, 2.1) for p in li]
+>>> li2
+[Point(-15.6, 103.1), Point(-0.3999999999999999, 2.1)]
+>>> p1 = Point()
+>>> c1 = Circle(p1, 10)
+>>> c1
+Circle(Point(0, 0), 10)
+>>> c2 = c1.translate(-3.14, +12.2)
+>>> c1
+Circle(Point(0, 0), 10)
+>>> c2
+Circle(Point(-3.14, 12.2), 10)
+>>> c1.perimeter()
+62.83185307179586
+>>> c1.area()
+314.1592653589793
+>>> c2.perimeter()
+62.83185307179586
+>>> c2.area()
+314.1592653589793
+>>> from geometry import Point, Rectangle
+>>> p1 = Point(5, 5)
+>>> p2 = Point(1, -1)
+>>> s1 = Rectangle(p1, p2)
+>>> s1
+Rectangle(Point(5, 5), Point(1, -1))
+>>> s1.perimeter()
+20
+>>> s1.area()
+24
+>>> s2 = s1.translate(-11, +3.14)
+>>> s1
+Rectangle(Point(5, 5), Point(1, -1))
+>>> s2
+Rectangle(Point(-6, 8.14), Point(-10, 2.14))
+>>> s2.perimeter()
+20.0
+>>> s2.area()
+24.0
