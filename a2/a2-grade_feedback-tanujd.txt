@@ -1,0 +1,72 @@
+SENG 265 -- SPRING 2025
+ASSIGNMENT #2 EVALUATION
+========================
+
+Student Name:       Tanuj Dargan
+Student V-Number:   V01040822
+Student NetlinkID:  tanujd
+
+-----
+(1) spf_analyzer.py submitted correctly; runs
+without errors or warnings.
+
+- Satisfied.
+
+-----
+(2) Tests passed (and further comments)
+
+Task 1 completed successfully.
+Task 2 completed successfully.
+Task 3 completed successfully.
+Task 4 completed successfully.
+Task 5 completed successfully.
+[tester] (INFO): Tests to run: 5
+[tester] (INFO): |Test 01|----------------------------------------
+[tester] (INFO): Attempting: python spf_analyzer.py --TASK="1"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): |Test 02|----------------------------------------
+[tester] (INFO): Attempting: python spf_analyzer.py --TASK="2"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): |Test 03|----------------------------------------
+[tester] (INFO): Attempting: python spf_analyzer.py --TASK="3"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): |Test 04|----------------------------------------
+[tester] (INFO): Attempting: python spf_analyzer.py --TASK="4"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): |Test 05|----------------------------------------
+[tester] (INFO): Attempting: python spf_analyzer.py --TASK="5"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): ------------------------------------------------
+[tester] (INFO): TESTS PASSED: 5/5
+
+
+-----
+(3) Code formatting and structure:
+
+Positive aspects:
+
+- Good solution that makes use of relevant Python collections and modules.
+
+- Good formatting and structure of the code that facilitates reading
+  and understanding.
+
+- Good use of type hints to facilitate readability and maintainability.
+
+- Good naming conventions for functions and variables.
+
+- Good attempt at documenting the code using comments to describe
+  important aspects of the solution.
+
+- Appropriate use of code segmentation (i.e. function creation and
+  use) that facilitates the usability and eventual maintainability of
+  your solution.
+
+
+Improvement opportunities:
+
+
+
+-----
+
+MARKS: 100
+
