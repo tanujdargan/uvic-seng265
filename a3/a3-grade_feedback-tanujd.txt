@@ -1,0 +1,68 @@
+SENG 265 -- SPRING 2025
+ASSIGNMENT #3 EVALUATION
+========================
+
+Student Name: Tanuj Dargan
+Student V-Number: V01040822
+Student NetlinkID: tanujd
+
+-----
+(1) Assignment files compile without errors
+
+gcc -c -Wall -g -DDEBUG -D_GNU_SOURCE -std=c99 -O0 spf_analyzer.c
+gcc -c -Wall -g -DDEBUG -D_GNU_SOURCE -std=c99 -O0 list.c
+gcc -c -Wall -g -DDEBUG -D_GNU_SOURCE -std=c99 -O0 emalloc.c
+gcc spf_analyzer.o list.o emalloc.o -o spf_analyzer
+./prep.py (INFO): Copied given files to /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/build/tanujd
+./prep.py (INFO): Trying to copy /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/submissions/tanujd/a3 from the submission by the student...
+./prep.py (INFO): /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/submissions/tanujd/a3/emalloc.c copied to /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/build/tanujd/emalloc.c
+./prep.py (INFO): /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/submissions/tanujd/a3/emalloc.h copied to /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/build/tanujd/emalloc.h
+./prep.py (INFO): /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/submissions/tanujd/a3/list.c copied to /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/build/tanujd/list.c
+./prep.py (INFO): /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/submissions/tanujd/a3/list.h copied to /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/build/tanujd/list.h
+./prep.py (INFO): /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/submissions/tanujd/a3/makefile copied to /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/build/tanujd/makefile
+./prep.py (INFO): /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/submissions/tanujd/a3/spf_analyzer.c copied to /home/rivera/seng265/seng265-202501-team-repo/assignments/a3/build/tanujd/spf_analyzer.c
+./prep.py (INFO): Compiling...
+./prep.py (INFO): Ready to run tests for "tanujd"
+
+
+-----
+(2) Tests passed (and further comments)
+
+[tester] (INFO): Tests to run: 3
+[tester] (INFO): |Test 01|----------------------------------------
+[tester] (INFO): Attempting: ./spf_analyzer --TASK="1"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): |Test 02|----------------------------------------
+[tester] (INFO): Attempting: ./spf_analyzer --TASK="2"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): |Test 03|----------------------------------------
+[tester] (INFO): Attempting: ./spf_analyzer --TASK="3"
+[tester] (INFO): TEST PASSED: True
+[tester] (INFO): ------------------------------------------------
+[tester] (INFO): TESTS PASSED: 3/3
+
+
+-----
+(3) Code formatting and structure:
+
+Positive aspects:
+
+- All functions have proper documentation above their signatures, clearly describing their purpose, parameters, and return values.
+- The naming of variables seems to be consistent and meaningful throughout the code.
+- The code is well-structured and easy to follow.
+- Each function performs a single task, which makes the code more readable and maintainable.
+- The code does not have any unused variables or functions.
+- The code has consistent spacing between functions and other coding elements.
+- The code has good separation of concerns.
+
+Improvement opportunities:
+
+
+
+
+-----
+
+MARKS: 100
+
+
+
