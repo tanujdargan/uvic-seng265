@@ -1,168 +1,153 @@
 #!/usr/bin/env python3
 """Assignment 4 Part 3 - SENG 265 Python Arts Program"""
 
+from typing import IO, List, Optional
 from collections import namedtuple
-from typing import List, Optional, Tuple, NamedTuple
 import random
 
-# Named tuples for representing colors, positions, and dimensions
-Color = namedtuple('Color', ['r', 'g', 'b', 'opacity'])
-Position = namedtuple('Position', ['x', 'y'])
-Dimension = namedtuple('Dimension', ['width', 'height'])
+# Named tuples for cleaner code (from Part 1)
+Point = namedtuple('Point', ['x', 'y'])
+ColorRGBA = namedtuple('ColorRGBA', ['red', 'green', 'blue', 'opacity'])
 
 class HtmlComponent:
     """HtmlComponent class"""
+    def __init__(self, indent_level: int = 0) -> None:
+        self.indent_level: int = indent_level
+        
+    def get_indent(self) -> str:
+        """get_indent method"""
+        return "   " * self.indent_level
     
-    def __init__(self, tag: str, attributes: Optional[dict] = None, content: Optional[str] = None):
-        """__init__() method"""
-        self.tag = tag
-        self.attributes = attributes or {}
-        self.content = content
-        self.children: List[HtmlComponent] = []
-    
-    def add_child(self, child: 'HtmlComponent') -> None:
-        """add_child() method"""
-        self.children.append(child)
-    
-    def render(self, indent: int = 0) -> str:
-        """render() method"""
-        indent_str = " " * indent
-        result = f"{indent_str}<{self.tag}"
+    def write_line(self, file: IO[str], line: str) -> None:
+        """write_line method"""
+        file.write(f"{self.get_indent()}{line}\n")
         
-        for key, value in self.attributes.items():
-            result += f' {key}="{value}"'
-        
-        if not self.content and not self.children:
-            result += " />\n"
-            return result
-        
-        result += ">\n"
-        
-        if self.content:
-            result += f"{indent_str}  {self.content}\n"
-        
-        for child in self.children:
-            result += child.render(indent + 2)
-        
-        result += f"{indent_str}</{self.tag}>\n"
-        return result
+    def write_comment(self, file: IO[str], comment: str) -> None:
+        """write_comment method"""
+        self.write_line(file, f"<!--{comment}-->")
 
-
-class HtmlDocument:
-    """HtmlDocument class"""
+class CircleShape(HtmlComponent):
+    """CircleShape class"""
+    def __init__(self, center: Point, radius: int, color: ColorRGBA, indent_level: int = 0) -> None:
+        super().__init__(indent_level)
+        self.center: Point = center
+        self.radius: int = radius
+        self.color: ColorRGBA = color
     
-    def __init__(self, title: str):
-        """__init__() method"""
-        self.title = title
-        self.head = HtmlComponent("head")
-        self.body = HtmlComponent("body")
-        self.head.add_child(HtmlComponent("title", content=title))
-        
-    def add_to_body(self, component: HtmlComponent) -> None:
-        """add_to_body() method"""
-        self.body.add_child(component)
-        
-    def render(self) -> str:
-        """render() method"""
-        result = "<!DOCTYPE html>\n"
-        html = HtmlComponent("html")
-        html.add_child(self.head)
-        html.add_child(self.body)
-        result += html.render()
-        return result
-    
-    def save_to_file(self, filename: str) -> None:
-        """save_to_file() method"""
-        with open(filename, 'w') as file:
-            file.write(self.render())
+    def draw(self, file: IO[str]) -> None:
+        """draw method"""
+        line1: str = f'<circle cx="{self.center.x}" cy="{self.center.y}" r="{self.radius}" '
+        line2: str = f'fill="rgb({self.color.red}, {self.color.green}, {self.color.blue})" fill-opacity="{self.color.opacity}"></circle>'
+        self.write_line(file, line1 + line2)
 
+class RectangleShape(HtmlComponent):
+    """RectangleShape class"""
+    def __init__(self, top_left: Point, width: int, height: int, color: ColorRGBA, indent_level: int = 0) -> None:
+        super().__init__(indent_level)
+        self.top_left: Point = top_left
+        self.width: int = width
+        self.height: int = height
+        self.color: ColorRGBA = color
+    
+    def draw(self, file: IO[str]) -> None:
+        """draw method"""
+        line1: str = f'<rect x="{self.top_left.x}" y="{self.top_left.y}" width="{self.width}" height="{self.height}" '
+        line2: str = f'fill="rgb({self.color.red}, {self.color.green}, {self.color.blue})" fill-opacity="{self.color.opacity}"></rect>'
+        self.write_line(file, line1 + line2)
+
+class EllipseShape(HtmlComponent):
+    """EllipseShape class"""
+    def __init__(self, center: Point, rx: int, ry: int, color: ColorRGBA, indent_level: int = 0) -> None:
+        super().__init__(indent_level)
+        self.center: Point = center
+        self.rx: int = rx
+        self.ry: int = ry
+        self.color: ColorRGBA = color
+    
+    def draw(self, file: IO[str]) -> None:
+        """draw method"""
+        line1: str = f'<ellipse cx="{self.center.x}" cy="{self.center.y}" rx="{self.rx}" ry="{self.ry}" '
+        line2: str = f'fill="rgb({self.color.red}, {self.color.green}, {self.color.blue})" fill-opacity="{self.color.opacity}"></ellipse>'
+        self.write_line(file, line1 + line2)
 
 class SvgCanvas(HtmlComponent):
     """SvgCanvas class"""
+    def __init__(self, width: int, height: int, background_color: str = "white", indent_level: int = 0) -> None:
+        super().__init__(indent_level)
+        self.width: int = width
+        self.height: int = height
+        self.background_color: str = background_color
+        self.shapes = []
+        
+    def add_shape(self, shape: HtmlComponent) -> None:
+        """add_shape method"""
+        shape.indent_level = self.indent_level + 1
+        self.shapes.append(shape)
     
-    def __init__(self, width: int, height: int, background_color: str = "white"):
-        """__init__() method"""
-        attributes = {
-            "width": width,
-            "height": height,
-            "xmlns": "http://www.w3.org/2000/svg"
-        }
-        super().__init__("svg", attributes)
-        self.background = RectangleShape(
-            position=Position(0, 0),
-            dimension=Dimension(width, height),
-            fill=background_color
-        )
-        self.add_child(self.background)
+    def open_canvas(self, file: IO[str]) -> None:
+        """open_canvas method"""
+        self.write_comment(file, "Define SVG drawing box")
+        self.write_line(file, f'<svg width="{self.width}" height="{self.height}" xmlns="http://www.w3.org/2000/svg">')
+        # Add background if not white
+        if self.background_color != "white":
+            bg = RectangleShape(Point(0, 0), self.width, self.height, ColorRGBA(0, 0, 0, 1.0), self.indent_level + 1)
+            bg.color = ColorRGBA(0, 0, 0, 1.0)  # Placeholder - will use fill attribute instead
+            line = f'<rect x="0" y="0" width="{self.width}" height="{self.height}" fill="{self.background_color}"></rect>'
+            self.write_line(file, "   " + line)
     
-    def add_shape(self, shape: 'Shape') -> None:
-        """add_shape() method"""
-        self.add_child(shape)
+    def close_canvas(self, file: IO[str]) -> None:
+        """close_canvas method"""
+        self.write_line(file, "</svg>")
     
-    def gen_art(self, shapes: List['Shape']) -> None:
-        """gen_art() method"""
-        for shape in shapes:
-            self.add_shape(shape)
+    def gen_art(self, file: IO[str]) -> None:
+        """gen_art method"""
+        for shape in self.shapes:
+            shape.draw(file)
+            
+    def draw(self, file: IO[str]) -> None:
+        """draw method"""
+        self.open_canvas(file)
+        self.gen_art(file)
+        self.close_canvas(file)
 
-
-class Shape(HtmlComponent):
-    """Shape class"""
+class HtmlDocument(HtmlComponent):
+    """HtmlDocument class"""
+    def __init__(self, title: str, indent_level: int = 0) -> None:
+        super().__init__(indent_level)
+        self.title: str = title
+        self.canvas: SvgCanvas = None
+        
+    def set_canvas(self, canvas: SvgCanvas) -> None:
+        """set_canvas method"""
+        canvas.indent_level = self.indent_level + 1
+        self.canvas = canvas
     
-    def __init__(self, tag: str, attributes: dict):
-        """__init__() method"""
-        super().__init__(tag, attributes)
-
-
-class CircleShape(Shape):
-    """CircleShape class"""
+    def write_header(self, file: IO[str]) -> None:
+        """write_header method"""
+        self.write_line(file, "<!DOCTYPE html>")
+        self.write_line(file, "<html>")
+        self.write_line(file, "<head>")
+        self.indent_level += 1
+        self.write_line(file, f"<title>{self.title}</title>")
+        self.indent_level -= 1
+        self.write_line(file, "</head>")
+        self.write_line(file, "<body>")
     
-    def __init__(self, position: Position, radius: int, fill: str, opacity: float = 1.0):
-        """__init__() method"""
-        attributes = {
-            "cx": position.x,
-            "cy": position.y,
-            "r": radius,
-            "fill": fill,
-            "opacity": opacity
-        }
-        super().__init__("circle", attributes)
-
-
-class RectangleShape(Shape):
-    """RectangleShape class"""
+    def write_footer(self, file: IO[str]) -> None:
+        """write_footer method"""
+        self.write_line(file, "</body>")
+        self.write_line(file, "</html>")
     
-    def __init__(self, position: Position, dimension: Dimension, fill: str, opacity: float = 1.0):
-        """__init__() method"""
-        attributes = {
-            "x": position.x,
-            "y": position.y,
-            "width": dimension.width,
-            "height": dimension.height,
-            "fill": fill,
-            "opacity": opacity
-        }
-        super().__init__("rect", attributes)
-
-
-class EllipseShape(Shape):
-    """EllipseShape class"""
-    
-    def __init__(self, position: Position, rx: int, ry: int, fill: str, opacity: float = 1.0):
-        """__init__() method"""
-        attributes = {
-            "cx": position.x,
-            "cy": position.y,
-            "rx": rx,
-            "ry": ry,
-            "fill": fill,
-            "opacity": opacity
-        }
-        super().__init__("ellipse", attributes)
-
+    def save(self, filename: str) -> None:
+        """save method"""
+        with open(filename, "w") as f:
+            self.write_header(f)
+            if self.canvas:
+                self.canvas.draw(f)
+            self.write_footer(f)
 
 class PyArtConfig:
     """PyArtConfig class"""
-    
     # Class variables for default ranges
     DEFAULT_WIDTH = 800
     DEFAULT_HEIGHT = 600
@@ -201,7 +186,7 @@ class PyArtConfig:
                  blue_min: int = DEFAULT_BLUE_MIN,
                  blue_max: int = DEFAULT_BLUE_MAX,
                  background_color: str = "white",
-                 shape_types: List[str] = None):
+                 shape_types: List[str] = None) -> None:
         """__init__() method"""
         self.canvas_width = canvas_width
         self.canvas_height = canvas_height
@@ -223,62 +208,63 @@ class PyArtConfig:
         self.background_color = background_color
         self.shape_types = shape_types if shape_types else ["circle", "rectangle", "ellipse"]
 
-
 class RandomShape:
     """RandomShape class"""
     
-    def __init__(self, config: PyArtConfig):
+    def __init__(self, count: int, config: PyArtConfig) -> None:
         """__init__() method"""
+        self.count = count
         self.config = config
         self.shape_type = random.choice(config.shape_types)
-        self.position = Position(
-            random.randint(0, config.canvas_width),
-            random.randint(0, config.canvas_height)
-        )
+        
+        # Generate random values based on configuration
+        self.x = random.randint(0, config.canvas_width)
+        self.y = random.randint(0, config.canvas_height)
         self.radius = random.randint(config.radius_min, config.radius_max)
         self.width = random.randint(config.width_min, config.width_max)
         self.height = random.randint(config.height_min, config.height_max)
-        self.color = Color(
-            random.randint(config.red_min, config.red_max),
-            random.randint(config.green_min, config.green_max),
-            random.randint(config.blue_min, config.blue_max),
-            random.uniform(config.opacity_min, config.opacity_max)
-        )
+        self.r = random.randint(config.red_min, config.red_max)
+        self.g = random.randint(config.green_min, config.green_max)
+        self.b = random.randint(config.blue_min, config.blue_max)
+        self.opacity = round(random.uniform(config.opacity_min, config.opacity_max), 2)
     
     def __str__(self) -> str:
         """__str__() method"""
-        result = f"Shape Type: {self.shape_type}\n"
-        result += f"Position: ({self.position.x}, {self.position.y})\n"
-        
+        shape_info = ""
         if self.shape_type == "circle":
-            result += f"Radius: {self.radius}\n"
-        else:
-            result += f"Width: {self.width}\n"
-            result += f"Height: {self.height}\n"
-        
-        result += f"Color: rgb({self.color.r}, {self.color.g}, {self.color.b})\n"
-        result += f"Opacity: {self.color.opacity:.2f}"
-        return result
+            shape_info = f"radius={self.radius}"
+        elif self.shape_type == "ellipse":
+            shape_info = f"rx={self.width//2}, ry={self.height//2}"
+        elif self.shape_type == "rectangle":
+            shape_info = f"width={self.width}, height={self.height}"
+            
+        return (
+            f"Shape #{self.count}:\n"
+            f"  Type: {self.shape_type}\n"
+            f"  Position: ({self.x}, {self.y})\n"
+            f"  Size: {shape_info}\n"
+            f"  Color: rgb({self.r}, {self.g}, {self.b})\n"
+            f"  Opacity: {self.opacity}"
+        )
     
     def as_Part2_line(self) -> str:
         """as_Part2_line() method"""
-        shape_id = {"circle": 1, "rectangle": 2, "ellipse": 3}.get(self.shape_type, 0)
-        return f"{shape_id:3d} {self.position.x:4d} {self.position.y:4d} {self.radius:3d} {self.width:4d} {self.height:4d} {self.color.r:3d} {self.color.g:3d} {self.color.b:3d} {self.color.opacity:.2f}"
+        shape_code = {"circle": "1", "rectangle": "2", "ellipse": "3"}.get(self.shape_type, "0")
+        return f"{self.count:3d} {shape_code:3s} {self.x:3d} {self.y:3d} {self.radius:3d} {self.width//2:3d} {self.height//2:3d} {self.width:3d} {self.height:3d} {self.r:3d} {self.g:3d} {self.b:3d} {self.opacity:.2f}"
     
-    def as_svg(self) -> Shape:
-        """as_svg() method"""
-        fill = f"rgb({self.color.r}, {self.color.g}, {self.color.b})"
+    def as_svg_shape(self) -> HtmlComponent:
+        """as_svg_shape() method"""
+        color = ColorRGBA(self.r, self.g, self.b, self.opacity)
         
         if self.shape_type == "circle":
-            return CircleShape(self.position, self.radius, fill, self.color.opacity)
+            return CircleShape(Point(self.x, self.y), self.radius, color)
         elif self.shape_type == "rectangle":
-            return RectangleShape(self.position, Dimension(self.width, self.height), fill, self.color.opacity)
+            return RectangleShape(Point(self.x, self.y), self.width, self.height, color)
         elif self.shape_type == "ellipse":
-            return EllipseShape(self.position, self.width // 2, self.height // 2, fill, self.color.opacity)
+            return EllipseShape(Point(self.x, self.y), self.width // 2, self.height // 2, color)
         else:
             # Default to circle if shape type is unknown
-            return CircleShape(self.position, self.radius, fill, self.color.opacity)
-
+            return CircleShape(Point(self.x, self.y), self.radius, color)
 
 def generate_art(config: PyArtConfig, title: str, filename: str) -> None:
     """Generate art based on configuration and save to file"""
@@ -289,20 +275,15 @@ def generate_art(config: PyArtConfig, title: str, filename: str) -> None:
     canvas = SvgCanvas(config.canvas_width, config.canvas_height, config.background_color)
     
     # Generate random shapes
-    shapes = []
-    for _ in range(config.num_shapes):
-        random_shape = RandomShape(config)
-        shapes.append(random_shape.as_svg())
+    for i in range(1, config.num_shapes + 1):
+        random_shape = RandomShape(i, config)
+        canvas.add_shape(random_shape.as_svg_shape())
     
-    # Add shapes to canvas
-    canvas.gen_art(shapes)
-    
-    # Add canvas to document
-    doc.add_to_body(canvas)
+    # Set canvas to document
+    doc.set_canvas(canvas)
     
     # Save to file
-    doc.save_to_file(filename)
-
+    doc.save(filename)
 
 def main() -> None:
     """main() function"""
@@ -360,7 +341,7 @@ def main() -> None:
         blue_min=100,
         blue_max=255,
         shape_types=["circle", "rectangle", "ellipse"],
-        background_color="white"
+        background_color="black"
     )
     
     # Generate art with each configuration
@@ -369,7 +350,6 @@ def main() -> None:
     generate_art(config3, "Mixed Shapes - Blue Theme", "a433.html")
     
     print("Art generation complete. Files saved as a431.html, a432.html, and a433.html")
-
 
 if __name__ == "__main__":
     main()
